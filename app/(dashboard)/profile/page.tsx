@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { usePathname } from 'next/navigation';
+// import { usePathname } from 'next/navigation';
 import profile from '@/public/assets/profile.jpg';
 import { HiOutlineUser } from 'react-icons/hi2';
 import { MdOutlineCancel } from 'react-icons/md';
@@ -13,6 +13,7 @@ import img2 from '@/public/assets/img2.jpg';
 import img3 from '@/public/assets/img4.jpg';
 import Image from 'next/image';
 import { RadialChart } from '@/components/charts/RadialChart';
+import Link from 'next/link';
 
 
 
@@ -63,12 +64,12 @@ const productImage = [
 ];
 
 const Profile = () => {
-    const pathname = usePathname();
+    // const pathname = usePathname();
   
-    const getActiveClass = (path: string) =>
-      pathname === path
-        ? 'bg-blue text-white'
-        : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200';
+    // const getActiveClass = (path: string) =>
+    //   pathname === path
+    //     ? 'bg-blue text-white'
+    //     : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200';
   return (
     
     <div className="flex max-xl:flex-col gap-6">
@@ -128,9 +129,11 @@ const Profile = () => {
           <button className="w-[30%] rounded-xl bg-[#F3F3F3] text-[#4A4A4A] py-2 max-lg:w-full">
             Update Profile
           </button>
-          <button className="bg-[#4C4C4C] text-[#fff] w-[30%] py-2 rounded-xl max-lg:w-full">
+         <Link href='/login' className='flex justify-center items-center'>
+         <button className="bg-[#4C4C4C] text-[#fff] w-[30%] py-2 rounded-xl max-lg:w-full">
             Log Out
           </button> 
+         </Link>
 
         </div>
       </div>

@@ -93,7 +93,7 @@ export default function LoginPage() {
                 <Link href="/home" className="flex items-center justify-center"><Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">Log in</Button></Link>
 
                 <p className="text-center text-sm font-spaceGrotesk">
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <Link href="/signup" className="underline font-bold font-spaceGrotesk">
                     Sign up for free
                   </Link>
