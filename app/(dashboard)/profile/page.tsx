@@ -64,14 +64,14 @@ const productImage = [
 ];
 
 const Profile = () => {
-    // const pathname = usePathname();
-  
-    // const getActiveClass = (path: string) =>
-    //   pathname === path
-    //     ? 'bg-blue text-white'
-    //     : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200';
+  // const pathname = usePathname();
+
+  // const getActiveClass = (path: string) =>
+  //   pathname === path
+  //     ? 'bg-blue text-white'
+  //     : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200';
   return (
-    
+
     <div className="flex max-xl:flex-col gap-6">
       <div className="bg-white rounded-xl p-4 px-6 flex flex-col gap-3 justify-center items-center h-fit">
         <Image
@@ -129,11 +129,9 @@ const Profile = () => {
           <button className="w-[30%] rounded-xl bg-[#F3F3F3] text-[#4A4A4A] py-2 max-lg:w-full">
             Update Profile
           </button>
-         <Link href='/login' className='flex justify-center items-center'>
-         <button className="bg-[#4C4C4C] text-[#fff] w-[30%] py-2 rounded-xl max-lg:w-full">
+          <Link href='/login' className=" flex justify-center items-center bg-[#4C4C4C] text-[#fff] w-[30%] py-2 rounded-xl max-lg:w-full">
             Log Out
-          </button> 
-         </Link>
+          </Link>
 
         </div>
       </div>
@@ -167,7 +165,7 @@ const Profile = () => {
             <h3>Total work done</h3>
             <p className="px-3 py-1 rounded border text-sm cursor-pointer">This week</p>
           </div>
-          <RadialChart/>
+          <RadialChart />
         </div>
       </div>
     </div>
