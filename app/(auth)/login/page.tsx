@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react"
 
-
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
+
 
   return (
     <div className="min-h-screen w-full bg-gray-100">
@@ -90,7 +90,7 @@ export default function LoginPage() {
                   </Link>
                 </div>
 
-                <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">Log in</Button>
+                <Link href="/home" className="flex items-center justify-center"><Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">Log in</Button></Link>
 
                 <p className="text-center text-sm font-spaceGrotesk">
                   Don't have an account?{" "}

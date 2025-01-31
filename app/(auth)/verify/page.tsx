@@ -2,6 +2,7 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
+import Link from "next/link"
 
 
 export default function VerificationPage() {
@@ -44,22 +45,21 @@ export default function VerificationPage() {
 
                 <div className="mt-12 mb-4">
 
-                <div className="space-y-4">
-                  <input id="email" type="email" placeholder="Email" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
+                  <div className="space-y-4">
+                    <input id="email" type="email" placeholder="Email" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
+                  </div>
+
+                  <div className="space-y-4">
+                    <input id="phone" type="tel" placeholder="Phone" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
+                  </div>
+
                 </div>
 
-                <div className="space-y-4">
-                  <input id="phone" type="tel" placeholder="Phone" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
-                </div>
-
-                </div>
+                <Link href='/verifycode' className='flex  items-center justify-center'>
+                  <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">verify</Button>
+                </Link>
 
 
-                
-   
-                <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">verify</Button>
-
-                
               </form>
             </div>
           </div>

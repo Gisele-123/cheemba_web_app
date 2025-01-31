@@ -78,11 +78,11 @@ export default function SignUpPage() {
                     >
                       {showPassword ? (
                         <EyeIcon className="h-4 w-4" aria-hidden="true" />
-                        
+
                       ) : (
 
                         <EyeOffIcon className="h-4 w-4" aria-hidden="true" />
-                        
+
                       )}
                       <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
                     </Button>
@@ -106,20 +106,21 @@ export default function SignUpPage() {
                     >
                       {showConfirmPassword ? (
                         <EyeIcon className="h-4 w-4" aria-hidden="true" />
-                        
+
                       ) : (
 
                         <EyeOffIcon className="h-4 w-4" aria-hidden="true" />
-                        
+
                       )}
                       <span className="sr-only">{showConfirmPassword ? "Hide password" : "Show password"}</span>
                     </Button>
                   </div>
                 </div>
 
-               
 
-                <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">Sign up</Button>
+                <Link href='/verify' className="flex items-center justify-center">
+                  <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">Sign up</Button>
+                </Link>
 
                 <p className="text-center text-sm font-spaceGrotesk">
                   Already have an account?{" "}

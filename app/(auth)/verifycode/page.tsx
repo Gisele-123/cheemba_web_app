@@ -2,7 +2,7 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
-
+import Link from "next/link"
 
 export default function CodePage() {
 
@@ -41,18 +41,19 @@ export default function CodePage() {
               </div>
 
               <form className="space-y-8">
-               
+
 
                 <div className="space-y-4 mt-12 mb-4">
                   <input id="code" type="number" placeholder="Code" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
                 </div>
 
-               
 
 
-                <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">verify</Button>
+                <Link href='/login' className='flex  items-center justify-center'>
+                  <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">verify</Button>
 
-                
+                </Link>
+
               </form>
             </div>
           </div>
