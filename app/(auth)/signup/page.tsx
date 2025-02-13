@@ -1,14 +1,70 @@
-"use client"
-import { EyeIcon, EyeOffIcon } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import React, { useState } from "react"
-
+"use client";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import axios from 'axios';
+import Swal from 'sweetalert2';  // SweetAlert2 import
+import { useRouter } from 'next/navigation';  // Updated import
 
 export default function SignUpPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [company, setCompany] = useState('');
+  const [email, setEmail] = useState('');
+  const [location, setLocation] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const userData = {
+      company_name: company,
+      company_email: email,
+      location: location,
+      password: password,
+      confirm_password: confirmPassword
+    };
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post('http://localhost:5000/signup', userData);
+
+      // Display success message with SweetAlert2
+      Swal.fire({
+        title: 'Success!',
+        text: 'Company created successfully. Please verify your email.',
+        icon: 'success',
+        confirmButtonText: 'Okay'
+      }).then((result) => {
+        // Redirect to /verify after the user clicks "Okay"
+        if (result.isConfirmed) {
+          router.push('/verify');
+        }
+      });
+
+    } catch (err: any) {
+      setError("Error signing up, please try again");
+      console.error(err);
+
+      // Display error message with SweetAlert2
+      Swal.fire({
+        title: 'Error!',
+        text: err.response?.data?.message || "Error signing up, please try again",
+        icon: 'error',
+        confirmButtonText: 'Okay'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-gray-100">
@@ -16,8 +72,7 @@ export default function SignUpPage() {
       <div className="px-10 py-3">
         <div className="flex items-center gap-4">
           <Image src="/assets/logo.png" alt="Cheemba Logo" width={32} height={32} className="h-8 w-8" />
-          <span className="text-black-xl font-roboto font-bold">Chee-<span className="text-blue-600 font-roboto font-bold">mba</span>
-          </span>
+          <span className="text-black-xl font-roboto font-bold">Chee-<span className="text-blue-600 font-roboto font-bold">mba</span></span>
         </div>
       </div>
 
@@ -28,7 +83,7 @@ export default function SignUpPage() {
           <div className="relative hidden lg:block">
             <Image
               src="/assets/frame.png"
-              alt="Login Illustration"
+              alt="SignUp Illustration"
               width={600}
               height={600}
               className="h-auto w-full"
@@ -36,54 +91,32 @@ export default function SignUpPage() {
             />
           </div>
 
-          {/* Right Section - Login Form */}
+          {/* Right Section - SignUp Form */}
           <div className="flex items-center justify-center">
             <div className="w-full max-w-md space-y-6">
               <div className="space-y-4">
                 <h1 className="text-4xl font-manrope font-bold tracking-tight">Welcome, Cheemba</h1>
-                <p className="font-spaceGrotesk">Welcome back! Please enter your details.</p>
+                <p className="font-spaceGrotesk">Please enter your details to sign up.</p>
               </div>
 
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
-                  <input id="company" placeholder="Enter the company name" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
+                  <input id="company" placeholder="Enter the company name" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" value={company} onChange={(e) => setCompany(e.target.value)} />
                 </div>
 
                 <div className="space-y-4">
-                  <input id="pincode" type="number" placeholder="Enter the pincode on the bin head" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
+                  <input id="email" type="email" placeholder="Email" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
 
                 <div className="space-y-4">
-                  <input id="email" type="email" placeholder="Email" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
-                </div>
-
-                <div className="space-y-4">
-                  <input id="phone" type="tel" placeholder="Phone" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
+                  <input id="location" type="tel" placeholder="Location" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" value={location} onChange={(e) => setLocation(e.target.value)} />
                 </div>
 
                 <div className="space-y-4">
                   <div className="relative">
-                    <input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-2 py-2 hover:bg-transparent border-gray-300"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    >
-                      {showPassword ? (
-                        <EyeIcon className="h-4 w-4" aria-hidden="true" />
-
-                      ) : (
-
-                        <EyeOffIcon className="h-4 w-4" aria-hidden="true" />
-
-                      )}
+                    <input id="password" type={showPassword ? "text" : "password"} placeholder="Password" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-2 py-2 hover:bg-transparent border-gray-300" onClick={() => setShowPassword((prev) => !prev)}>
+                      {showPassword ? <EyeIcon className="h-4 w-4" /> : <EyeOffIcon className="h-4 w-4" />}
                       <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
                     </Button>
                   </div>
@@ -91,36 +124,17 @@ export default function SignUpPage() {
 
                 <div className="space-y-4">
                   <div className="relative">
-                    <input
-                      id="confirm-password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm password"
-                      className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-2 py-2 hover:bg-transparent border-gray-300"
-                      onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    >
-                      {showConfirmPassword ? (
-                        <EyeIcon className="h-4 w-4" aria-hidden="true" />
-
-                      ) : (
-
-                        <EyeOffIcon className="h-4 w-4" aria-hidden="true" />
-
-                      )}
+                    <input id="confirm-password" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                    <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-2 py-2 hover:bg-transparent border-gray-300" onClick={() => setShowConfirmPassword((prev) => !prev)}>
+                      {showConfirmPassword ? <EyeIcon className="h-4 w-4" /> : <EyeOffIcon className="h-4 w-4" />}
                       <span className="sr-only">{showConfirmPassword ? "Hide password" : "Show password"}</span>
                     </Button>
                   </div>
                 </div>
 
-
-                <Link href='/verify' className="flex items-center justify-center">
-                  <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">Sign up</Button>
-                </Link>
+                <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk" type="submit" disabled={loading}>
+                  {loading ? 'Signing Up...' : 'Sign Up'}
+                </Button>
 
                 <p className="text-center text-sm font-spaceGrotesk">
                   Already have an account?{" "}
@@ -134,6 +148,5 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

@@ -1,11 +1,49 @@
 "use client"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import React from "react"
+import React, { useState } from "react"
 import Link from "next/link"
-
+import axios from 'axios'  // Import axios for HTTP requests
+import Swal from 'sweetalert2'  // Import SweetAlert2
 
 export default function VerificationPage() {
+  const [email, setEmail] = useState('')  // Add state for email
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false);
+
+  // Handle the form submission
+  const handleVerification = async (e: React.FormEvent) => {
+    setLoading(true);
+    e.preventDefault()
+
+    if (!email) {
+      setMessage('Email is required')
+      return
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/email-verify', { company_email: email })
+      
+      // Display success message using SweetAlert2
+      Swal.fire({
+        title: 'Success!',
+        text: response.data.message,
+        icon: 'success',
+        confirmButtonText: 'OK',
+      }).then(() => {
+        // Redirect to verify code page after success
+        window.location.href = '/verifycode'
+      })
+    } catch (error) {
+      // Display error message using SweetAlert2
+      Swal.fire({
+        title: 'Error',
+        text: 'Error sending verification email',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      })
+    }
+  }
 
   return (
     <div className="min-h-screen w-full bg-gray-100">
@@ -13,8 +51,7 @@ export default function VerificationPage() {
       <div className="px-10 py-6">
         <div className="flex items-center gap-4">
           <Image src="/assets/logo.png" alt="Cheemba Logo" width={32} height={32} className="h-8 w-8" />
-          <span className="text-black-xl font-roboto font-bold">Chee-<span className="text-blue-600 font-roboto font-bold">mba</span>
-          </span>
+          <span className="text-black-xl font-roboto font-bold">Chee-<span className="text-blue-600 font-roboto font-bold">mba</span></span>
         </div>
       </div>
 
@@ -41,25 +78,29 @@ export default function VerificationPage() {
                 <p className="font-spaceGrotesk">Verify using email or phone number</p>
               </div>
 
-              <form className="space-y-8">
-
+              <form className="space-y-8" onSubmit={handleVerification}>
                 <div className="mt-12 mb-4">
-
                   <div className="space-y-4">
-                    <input id="email" type="email" placeholder="Email" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}  // Handle email input
+                      className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100"
+                    />
                   </div>
-
-                  <div className="space-y-4">
-                    <input id="phone" type="tel" placeholder="Phone" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
-                  </div>
-
                 </div>
+              
 
-                <Link href='/verifycode' className='flex  items-center justify-center'>
-                  <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">verify</Button>
-                </Link>
-
-
+                <Button
+      className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk"
+      type="submit"
+      onClick={handleVerification}
+      disabled={loading}
+    >
+      {loading ? 'Verifying...' : 'Verify'}
+    </Button>
               </form>
             </div>
           </div>
@@ -68,4 +109,3 @@ export default function VerificationPage() {
     </div>
   )
 }
-

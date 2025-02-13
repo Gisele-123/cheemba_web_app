@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
-// import { usePathname } from 'next/navigation';
+import React, { useState } from 'react';
+import Swal from 'sweetalert2'; // Import SweetAlert2
+import { useRouter } from 'next/navigation'; // For redirecting after logout
 import profile from '@/public/assets/profile.jpg';
 import { HiOutlineUser } from 'react-icons/hi2';
 import { MdOutlineCancel } from 'react-icons/md';
@@ -13,10 +14,8 @@ import img2 from '@/public/assets/img2.jpg';
 import img3 from '@/public/assets/img4.jpg';
 import Image from 'next/image';
 import { RadialChart } from '@/components/charts/RadialChart';
-import Link from 'next/link';
-
-
-
+// import Link from 'next/link';
+import axios from 'axios';
 
 
 
@@ -64,14 +63,57 @@ const productImage = [
 ];
 
 const Profile = () => {
-  // const pathname = usePathname();
+  const [loading, setLoading] = useState(false); // state to track logout loading
+  const router = useRouter(); // Use router for navigation
 
-  // const getActiveClass = (path: string) =>
-  //   pathname === path
-  //     ? 'bg-blue text-white'
-  //     : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200';
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out of your account!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, log out',
+      cancelButtonText: 'Cancel',
+      preConfirm: async () => {
+        setLoading(true); // Set loading to true
+  
+        try {
+          const response = await axios.post(
+            'http://localhost:5000/logout',
+            {},
+            { withCredentials: true }
+          );
+  
+          if (response.data.message === 'Logged out successfully') {
+            Swal.fire('Logged out', 'You have been logged out.', 'success');
+            router.push('/login');
+          } else {
+            Swal.fire('Error', 'There was an issue logging you out.', 'error');
+          }
+        } catch (error:any) {
+          console.error('Error during logout:', error);
+          if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+            console.error('Response headers:', error.response.headers);
+          } else if (error.request) {
+            console.error('No response received:', error.request);
+          } else {
+            console.error('Error setting up request:', error.message);
+          }
+          Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
+        } finally {
+          setLoading(false); // Reset loading state
+        }
+      },
+    });
+  
+    if (!result.isConfirmed) {
+      setLoading(false); // Reset loading state if cancelled
+    }
+  };
+
   return (
-
     <div className="flex max-xl:flex-col gap-6">
       <div className="bg-white rounded-xl p-4 px-6 flex flex-col gap-3 justify-center items-center h-fit">
         <Image
@@ -129,10 +171,13 @@ const Profile = () => {
           <button className="w-[30%] rounded-xl bg-[#F3F3F3] text-[#4A4A4A] py-2 max-lg:w-full">
             Update Profile
           </button>
-          <Link href='/login' className=" flex justify-center items-center bg-[#4C4C4C] text-[#fff] w-[30%] py-2 rounded-xl max-lg:w-full">
-            Log Out
-          </Link>
-
+          <button
+            onClick={handleLogout}
+            className="flex justify-center items-center bg-[#4C4C4C] text-[#fff] w-[30%] py-2 rounded-xl max-lg:w-full"
+            disabled={loading}
+          >
+            {loading ? 'Logging out...' : 'Log Out'}
+          </button>
         </div>
       </div>
 

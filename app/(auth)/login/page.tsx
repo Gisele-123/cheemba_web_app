@@ -1,14 +1,54 @@
 'use client';
-import { EyeIcon, EyeOffIcon } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import React, { useState } from "react"
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
+import Swal from 'sweetalert2';
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter(); // Initialize router
+  const [loading, setLoading] = useState(false);
 
+  const handleLogin = async (e: React.FormEvent) => {
+    setLoading(true)
+    e.preventDefault();
+
+    const response = await fetch('http://localhost:5000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        company_email: email,
+        password: password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      Swal.fire({
+        icon: 'success',
+        title: data.message,
+        showConfirmButton: true,
+        timer: 1000,
+      }).then(() => {
+        router.push('/home');
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: data.message,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-gray-100">
@@ -39,15 +79,21 @@ export default function LoginPage() {
           {/* Right Section - Login Form */}
           <div className="flex items-center justify-center">
             <div className="w-full max-w-md space-y-6">
-              
               <div className="space-y-4">
                 <h1 className="text-4xl font-manrope font-bold tracking-tight">Welcome back, Cheemba</h1>
                 <p className="font-spaceGrotesk">Welcome back! Please enter your details.</p>
               </div>
 
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleLogin}>
                 <div className="space-y-4">
-                  <input id="email" type="email" placeholder="Email" className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100" />
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -57,6 +103,8 @@ export default function LoginPage() {
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                       className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <Button
                       type="button"
@@ -90,7 +138,14 @@ export default function LoginPage() {
                   </Link>
                 </div>
 
-                <Link href="/home" className="flex items-center justify-center"><Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk">Log in</Button></Link>
+                <Button
+                  className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk"
+                  type="submit"
+                  onClick={handleLogin}
+                  disabled={loading}
+                >
+                  {loading ? 'Signing In...' : 'Log In'}
+                </Button>
 
                 <p className="text-center text-sm font-spaceGrotesk">
                   Don&apos;t have an account?{" "}
@@ -104,6 +159,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
