@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 "use client"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
-import Link from "next/link"
 import Swal from "sweetalert2"
 import axios from "axios"
 
@@ -21,8 +24,7 @@ export default function CodePage() {
         company_email: email,
         verification_code: code,
       })
-      
-      // If verification is successful, show success message with SweetAlert2
+      console.log(response.data);
       Swal.fire({
         title: 'Verification Successful!',
         text: 'Your email has been verified.',

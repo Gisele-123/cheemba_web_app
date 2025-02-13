@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 "use client";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Image from "next/image";
@@ -5,8 +9,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import axios from 'axios';
-import Swal from 'sweetalert2';  // SweetAlert2 import
-import { useRouter } from 'next/navigation';  // Updated import
+import Swal from 'sweetalert2';  
+import { useRouter } from 'next/navigation';  
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,28 +40,27 @@ export default function SignUpPage() {
 
     try {
       const response = await axios.post('http://localhost:5000/signup', userData);
+      console.log(response.data);
 
-      // Display success message with SweetAlert2
       Swal.fire({
         title: 'Success!',
         text: 'Company created successfully. Please verify your email.',
         icon: 'success',
         confirmButtonText: 'Okay'
       }).then((result) => {
-        // Redirect to /verify after the user clicks "Okay"
         if (result.isConfirmed) {
           router.push('/verify');
         }
       });
 
-    } catch (err: any) {
+    } catch (error: any) {
       setError("Error signing up, please try again");
-      console.error(err);
+      console.error(error);
 
       // Display error message with SweetAlert2
       Swal.fire({
         title: 'Error!',
-        text: err.response?.data?.message || "Error signing up, please try again",
+        text: error.response?.data?.message || "Error signing up, please try again",
         icon: 'error',
         confirmButtonText: 'Okay'
       });

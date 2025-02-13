@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
-import Link from "next/link"
 import axios from 'axios'  // Import axios for HTTP requests
 import Swal from 'sweetalert2'  // Import SweetAlert2
 
@@ -23,7 +25,7 @@ export default function VerificationPage() {
 
     try {
       const response = await axios.post('http://localhost:5000/email-verify', { company_email: email })
-      
+      console.log(response.data);
       // Display success message using SweetAlert2
       Swal.fire({
         title: 'Success!',
