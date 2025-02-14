@@ -24,19 +24,19 @@ const chartConfig = {
     label: 'Visitors',
   },
   chrome: {
-    label: 'Chrome',
+    label: 'Plastic',
     color: 'hsl(var(--chart-1))',
   },
   safari: {
-    label: 'Safari',
+    label: 'Papers',
     color: 'hsl(var(--chart-2))',
   },
   firefox: {
-    label: 'Firefox',
+    label: 'Metals',
     color: 'hsl(var(--chart-3))',
   },
   edge: {
-    label: 'Edge',
+    label: 'Glass',
     color: 'hsl(var(--chart-4))',
   },
   other: {
