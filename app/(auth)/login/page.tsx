@@ -158,7 +158,7 @@ export default function LoginPage() {
                       Terms & Conditions
                     </label>
                   </div>
-                  <span className="text-xs text-slate-600">Sign-in only demo access</span>
+            
                 </div>
 
                 <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk" type="submit" disabled={loading}>
