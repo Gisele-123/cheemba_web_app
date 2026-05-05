@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, Settings } from 'lucide-react';
@@ -31,6 +31,7 @@ import { supabase } from '@/lib/supabase/client';
 
 const Heading = ({ isAdmin }: { isAdmin: boolean }) => {
   const [isSheetOpen, setSheetOpen] = useState(false);
+  const [accountName, setAccountName] = useState('Loading...');
   const router = useRouter();
   const pathname = usePathname();
 
@@ -42,6 +43,20 @@ const Heading = ({ isAdmin }: { isAdmin: boolean }) => {
   const handleLinkClick = () => {
     setSheetOpen(false);
   };
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      const metadata = data.user?.user_metadata;
+      if (isAdmin) {
+        setAccountName('Cheemba');
+        return;
+      }
+      const name = String(metadata?.company_name || metadata?.display_name || 'Cheemba User');
+      setAccountName(name);
+    };
+    loadUser();
+  }, [isAdmin]);
 
   return (
     <header className="flex h-16 items-center gap-4 bg-white bg-muted/40 px-4 lg:h-[80px] lg:px-6 border-b border-b-[#E1E1E1] shadow-sm">
@@ -115,6 +130,16 @@ const Heading = ({ isAdmin }: { isAdmin: boolean }) => {
                 Admin Portal
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                href="/admin?tab=inventory"
+                className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-3 ${pathname?.startsWith('/admin') ? 'bg-blue text-white' : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200'}`}
+                onClick={handleLinkClick}
+              >
+                <RiDeleteBinFill className="h-4 w-4" />
+                Bin Stock
+              </Link>
+            )}
           </nav>
           <div className="mt-auto">
             <nav className="grid gap-3 items-start text-base px-2 font-medium lg:px-4 text-white">
@@ -155,7 +180,7 @@ const Heading = ({ isAdmin }: { isAdmin: boolean }) => {
           <div className="flex items-center gap-2 cursor-pointer">
             <div className="flex flex-col text-sm max-md:hidden">
               <p className="text-[#0D062D] font-medium text-right">
-                EnviroServe
+                {accountName}
               </p>
               <p className="text-[#787486] text-right">Kigali, Rwanda</p>
             </div>

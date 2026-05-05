@@ -3,7 +3,7 @@
 
 
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2'; // Import SweetAlert2
 import { useRouter } from 'next/navigation'; // For redirecting after logout
 import profile from '@/public/assets/profile.jpg';
@@ -68,7 +68,31 @@ const productImage = [
 
 const Profile = () => {
   const [loading, setLoading] = useState(false); // state to track logout loading
+  const [displayName, setDisplayName] = useState('Cheemba User');
+  const [companyName, setCompanyName] = useState('Not set');
+  const [email, setEmail] = useState('No email');
+  const [roleLabel, setRoleLabel] = useState('Household');
   const router = useRouter(); // Use router for navigation
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const { data } = await supabase.auth.getUser();
+      const user = data.user;
+      const metadata = user?.user_metadata;
+      if (!user) return;
+      setDisplayName(String(metadata?.display_name || 'Cheemba User'));
+      setCompanyName(String(metadata?.company_name || 'Not set'));
+      setEmail(String(user.email || 'No email'));
+      setRoleLabel(
+        metadata?.role === 'collection_company'
+          ? 'Waste collection company'
+          : metadata?.role === 'admin'
+            ? 'Administrator'
+            : 'Individual household'
+      );
+    };
+    loadProfile();
+  }, []);
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -109,14 +133,14 @@ const Profile = () => {
           height={250}
         />
         <div className="w-full flex flex-col gap-3 justify-center items-center border-b border-b-[#D9E6F7] pb-3">
-          <p className="text-[#4B4B4B] font-medium">Envirservo</p>
+          <p className="text-[#4B4B4B] font-medium">{displayName}</p>
           <p>Kigali, Rwanda</p>
           <p>Rwanda</p>
         </div>
         <div className="w-full px-2 flex flex-col gap-3 border-b border-b-[#D9E6F7] py-3">
           <div className="flex items-center gap-2 text-[#4B4B4B]">
             <HiOutlineUser />
-            <p>Waste collection company</p>
+            <p>{roleLabel}</p>
           </div>
           <div className="w-full flex items-center gap-2 text-[#4B4B4B]">
             <MdOutlineCancel />
@@ -130,11 +154,11 @@ const Profile = () => {
           </div>
           <div className="flex items-center gap-2 text-[#4B4B4B]">
             <MdOutlineMail />
-            <p>envirservo@servo.com</p>
+            <p>{email}</p>
           </div>
           <div className="flex items-center gap-2 text-[#4B4B4B]">
             <FaImages />
-            <p>PDT - I</p>
+            <p>{companyName}</p>
           </div>
         </div>
       </div>
@@ -145,7 +169,7 @@ const Profile = () => {
           <span className="text-[#4B4B4B]">- Profile</span>
         </p>
         <h2 className="text-[#4B4B4B] font-semibold text-3xl">
-          Envirservo company
+          {companyName === 'Not set' ? displayName : companyName}
         </h2>
         <p className="px-4 py-2 rounded-lg text-[#4B4B4B] bg-[#EFF3F8]">
           Company dedicated to collect wastes on time and in efficient ways

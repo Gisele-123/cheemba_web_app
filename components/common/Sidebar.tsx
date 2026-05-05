@@ -74,6 +74,15 @@ const Sidebar = ({ isAdmin }: { isAdmin: boolean }) => {
                 Admin Portal
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                href="/admin?tab=inventory"
+                className={`flex items-center gap-3 rounded-[8px] px-3 py-[15px] ${pathname?.startsWith('/admin') ? 'bg-blue text-white' : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200'}`}
+              >
+                <RiDeleteBinFill className="h-4 w-4" />
+                Bin Stock
+              </Link>
+            )}
           </nav>
         </div>
         <div className="mt-auto">

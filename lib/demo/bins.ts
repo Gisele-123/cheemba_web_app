@@ -6,6 +6,7 @@ export type WasteBin = {
   lng: number;
   fillPercent: number;
   district: string;
+  companyName: string;
 };
 
 export const bins: WasteBin[] = [
@@ -17,6 +18,7 @@ export const bins: WasteBin[] = [
     lng: 30.0444,
     fillPercent: 84,
     district: "Nyarugenge",
+    companyName: "EnviroServe",
   },
   {
     id: "kig-kimisagara-02",
@@ -26,6 +28,7 @@ export const bins: WasteBin[] = [
     lng: 30.0316,
     fillPercent: 38,
     district: "Nyarugenge",
+    companyName: "GreenLine Waste",
   },
   {
     id: "kig-remera-03",
@@ -35,6 +38,7 @@ export const bins: WasteBin[] = [
     lng: 30.1123,
     fillPercent: 67,
     district: "Gasabo",
+    companyName: "Kigali Clean Co",
   },
   {
     id: "kig-kimironko-04",
@@ -44,6 +48,7 @@ export const bins: WasteBin[] = [
     lng: 30.1231,
     fillPercent: 22,
     district: "Gasabo",
+    companyName: "EnviroServe",
   },
   {
     id: "kig-gisozi-05",
@@ -53,6 +58,7 @@ export const bins: WasteBin[] = [
     lng: 30.0733,
     fillPercent: 91,
     district: "Gasabo",
+    companyName: "Kigali Clean Co",
   },
   {
     id: "kig-kicukiro-06",
@@ -62,6 +68,7 @@ export const bins: WasteBin[] = [
     lng: 30.1029,
     fillPercent: 49,
     district: "Kicukiro",
+    companyName: "GreenLine Waste",
   },
 ];
 

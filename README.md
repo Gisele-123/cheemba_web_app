@@ -8,12 +8,12 @@ This demo uses **Supabase Auth** (sign-in only), role-based access, an admin por
 2. In **Authentication > Providers > Email**, keep Email enabled.
 3. In **Authentication > Email templates / settings**, disable mandatory email confirmations for this demo (or use admin-created users with confirmed email).
 4. Copy your project values from **Project Settings > API**:
-   - Project URL
-   - `anon` key
-   - `service_role` key
+  - Project URL
+  - `anon` key
+  - `service_role` key
 5. Create a local env file:
-   - Copy `.env.example` to `.env.local`
-   - Fill in those three values.
+  - Copy `.env.example` to `.env.local`
+  - Fill in those three values.
 
 ## 2) Install and run
 
@@ -41,3 +41,4 @@ On first admin login attempt, the app auto-seeds this admin account (for demo sp
 - Bins page shows multiple Kigali bins and fill levels.
 - Bin detail page shows a shortest-route map that avoids marked traffic jam segments.
 - Dashboard messaging indicates the platform is live while still developing more modules.
+
