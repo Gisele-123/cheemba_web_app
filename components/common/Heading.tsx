@@ -140,6 +140,16 @@ const Heading = ({ isAdmin }: { isAdmin: boolean }) => {
                 Bin Stock
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                href="/admin?tab=map"
+                className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-3 ${pathname?.startsWith('/admin') ? 'bg-blue text-white' : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200'}`}
+                onClick={handleLinkClick}
+              >
+                <IoStatsChart className="h-4 w-4" />
+                Live Bin Map
+              </Link>
+            )}
           </nav>
           <div className="mt-auto">
             <nav className="grid gap-3 items-start text-base px-2 font-medium lg:px-4 text-white">

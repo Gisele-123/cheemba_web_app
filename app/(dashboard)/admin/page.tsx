@@ -1,10 +1,14 @@
 'use client';
 
 import { APP_ROLES, type AppRole } from "@/lib/auth/constants";
+import { bins } from "@/lib/demo/bins";
 import { INITIAL_BIN_STOCK, type BinSaleRecord } from "@/lib/demo/inventory";
 import { supabase } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import 'leaflet/dist/leaflet.css';
+import L from "leaflet";
+import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
 
 type MetricCard = {
   label: string;
@@ -22,7 +26,7 @@ const metrics: MetricCard[] = [
 export default function AdminPortalPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<"create" | "list" | "inventory">("create");
+  const [activeTab, setActiveTab] = useState<"create" | "list" | "inventory" | "map">("create");
   const [displayName, setDisplayName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
@@ -62,10 +66,18 @@ export default function AdminPortalPage() {
 
   useEffect(() => {
     const initialTab = searchParams.get("tab");
-    if (initialTab === "list" || initialTab === "inventory" || initialTab === "create") {
+    if (initialTab === "list" || initialTab === "inventory" || initialTab === "create" || initialTab === "map") {
       setActiveTab(initialTab);
     }
   }, [searchParams]);
+
+  const adminMapCenter: [number, number] = [-1.9441, 30.0619];
+  const mapIcon = (critical: boolean) =>
+    L.divIcon({
+      className: '',
+      html: `<span style="display:block;width:16px;height:16px;border-radius:9999px;background:${critical ? '#ef4444' : '#22c55e'};border:2px solid white;box-shadow:0 0 0 1px rgba(0,0,0,0.2);"></span>`,
+      iconSize: [16, 16],
+    });
 
   const roleLabel = useMemo(
     () => (role === APP_ROLES.COMPANY ? "Waste collection company" : "Individual household"),
@@ -237,6 +249,12 @@ export default function AdminPortalPage() {
             >
               Bin Stock & Sales
             </button>
+            <button
+              onClick={() => setActiveTab("map")}
+              className={`w-full rounded-lg px-4 py-3 text-left ${activeTab === "map" ? "bg-[#0A3B83] text-white" : "bg-slate-100 text-slate-700"}`}
+            >
+              Live Bin Map
+            </button>
           </aside>
 
           {activeTab === "create" ? (
@@ -333,7 +351,7 @@ export default function AdminPortalPage() {
                 </table>
               </div>
             </div>
-          ) : (
+          ) : activeTab === "inventory" ? (
             <div>
               <h2 className="text-2xl font-semibold text-[#0E2040]">Bin Stock and Company Allocation</h2>
               <p className="mt-1 text-sm text-slate-600">Assign bins from stock to collection companies and track sold units.</p>
@@ -405,6 +423,31 @@ export default function AdminPortalPage() {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-2xl font-semibold text-[#0E2040]">Live Bin Map</h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Hover over a bin to view level, status, location and assigned company.
+              </p>
+              <div className="mt-4 rounded-2xl border p-3">
+                <MapContainer center={adminMapCenter} zoom={12} scrollWheelZoom className="h-[560px] w-full rounded-xl">
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  {bins.map((bin) => (
+                    <Marker key={bin.id} position={[bin.lat, bin.lng]} icon={mapIcon(bin.fillPercent >= 90)}>
+                      <Tooltip direction="top" offset={[0, -8]} opacity={1}>
+                        <div className="space-y-1">
+                          <p className="font-semibold">{bin.name}</p>
+                          <p className="text-xs">Status: {bin.fillPercent >= 90 ? 'Critical' : 'Normal'}</p>
+                          <p className="text-xs">Level: {bin.fillPercent}%</p>
+                          <p className="text-xs">Location: {bin.locationName}</p>
+                          <p className="text-xs">Company: {bin.companyName}</p>
+                        </div>
+                      </Tooltip>
+                    </Marker>
+                  ))}
+                </MapContainer>
               </div>
             </div>
           )}

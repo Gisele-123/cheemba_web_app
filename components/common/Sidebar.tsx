@@ -83,6 +83,15 @@ const Sidebar = ({ isAdmin }: { isAdmin: boolean }) => {
                 Bin Stock
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                href="/admin?tab=map"
+                className={`flex items-center gap-3 rounded-[8px] px-3 py-[15px] ${pathname?.startsWith('/admin') ? 'bg-blue text-white' : 'text-muted-foreground hover:bg-blue/80 hover:text-white hover:transition-colors duration-200'}`}
+              >
+                <IoStatsChart className="h-4 w-4" />
+                Live Bin Map
+              </Link>
+            )}
           </nav>
         </div>
         <div className="mt-auto">
