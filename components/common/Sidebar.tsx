@@ -8,6 +8,7 @@ import { IoStatsChart } from 'react-icons/io5';
 import { RiDeleteBinFill } from 'react-icons/ri';
 import { FaShop } from 'react-icons/fa6';
 import { FaUserLarge } from 'react-icons/fa6';
+import { MessageSquareText } from 'lucide-react';
 
 const Sidebar = ({ isAdmin }: { isAdmin: boolean }) => {
   const pathname = usePathname();
@@ -63,6 +64,17 @@ const Sidebar = ({ isAdmin }: { isAdmin: boolean }) => {
               <FaShop className="h-4 w-4" />
               Market
             </Link>
+            {!isAdmin && (
+              <Link
+                href="/feedback"
+                className={`flex items-center gap-3 rounded-[8px] px-3 py-[15px] ${getActiveClass(
+                  '/feedback'
+                )}`}
+              >
+                <MessageSquareText className="h-4 w-4" />
+                Feedback
+              </Link>
+            )}
             {isAdmin && (
               <Link
                 href="/admin"

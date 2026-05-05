@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, Settings } from 'lucide-react';
+import { Menu, MessageSquareText, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -118,6 +118,18 @@ const Heading = ({ isAdmin }: { isAdmin: boolean }) => {
               <FaShop className="h-4 w-4" />
               Market
             </Link>
+            {!isAdmin && (
+              <Link
+                href="/feedback"
+                className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-3 ${getActiveClass(
+                  '/feedback'
+                )}`}
+                onClick={handleLinkClick}
+              >
+                <MessageSquareText className="h-4 w-4" />
+                Feedback
+              </Link>
+            )}
             {isAdmin && (
               <Link
                 href="/admin"

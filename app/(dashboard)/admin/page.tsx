@@ -2,6 +2,7 @@
 
 import { APP_ROLES, type AppRole } from "@/lib/auth/constants";
 import { bins } from "@/lib/demo/bins";
+import { FEEDBACK_STORAGE_KEY, type CompanyFeedback, demoFeedback } from "@/lib/demo/feedback";
 import { INITIAL_BIN_STOCK, type BinSaleRecord } from "@/lib/demo/inventory";
 import { supabase } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,7 +27,7 @@ const metrics: MetricCard[] = [
 export default function AdminPortalPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<"create" | "list" | "inventory" | "map">("create");
+  const [activeTab, setActiveTab] = useState<"create" | "list" | "inventory" | "map" | "feedback">("create");
   const [displayName, setDisplayName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
@@ -40,6 +41,7 @@ export default function AdminPortalPage() {
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [soldBins, setSoldBins] = useState<BinSaleRecord[]>([]);
   const [stockMessage, setStockMessage] = useState("");
+  const [feedbackList, setFeedbackList] = useState<CompanyFeedback[]>(demoFeedback);
   const [users, setUsers] = useState<
     Array<{
       id: string;
@@ -66,7 +68,7 @@ export default function AdminPortalPage() {
 
   useEffect(() => {
     const initialTab = searchParams.get("tab");
-    if (initialTab === "list" || initialTab === "inventory" || initialTab === "create" || initialTab === "map") {
+    if (initialTab === "list" || initialTab === "inventory" || initialTab === "create" || initialTab === "map" || initialTab === "feedback") {
       setActiveTab(initialTab);
     }
   }, [searchParams]);
@@ -131,8 +133,10 @@ export default function AdminPortalPage() {
   useEffect(() => {
     const savedStock = window.localStorage.getItem("cheemba-bin-stock");
     const savedSales = window.localStorage.getItem("cheemba-sold-bins");
+    const savedFeedback = window.localStorage.getItem(FEEDBACK_STORAGE_KEY);
     if (savedStock) setStock(Number(savedStock));
     if (savedSales) setSoldBins(JSON.parse(savedSales));
+    if (savedFeedback) setFeedbackList(JSON.parse(savedFeedback));
   }, []);
 
   useEffect(() => {
@@ -255,6 +259,12 @@ export default function AdminPortalPage() {
               className={`w-full rounded-lg px-4 py-3 text-left ${activeTab === "map" ? "bg-[#0A3B83] text-white" : "bg-slate-100 text-slate-700"}`}
             >
               Live Bin Map
+            </button>
+            <button
+              onClick={() => setActiveTab("feedback")}
+              className={`w-full rounded-lg px-4 py-3 text-left ${activeTab === "feedback" ? "bg-[#0A3B83] text-white" : "bg-slate-100 text-slate-700"}`}
+            >
+              Company Feedback
             </button>
           </aside>
 
@@ -426,7 +436,7 @@ export default function AdminPortalPage() {
                 </table>
               </div>
             </div>
-          ) : (
+          ) : activeTab === "map" ? (
             <div>
               <h2 className="text-2xl font-semibold text-[#0E2040]">Live Bin Map</h2>
               <p className="mt-1 text-sm text-slate-600">
@@ -449,6 +459,29 @@ export default function AdminPortalPage() {
                     </Marker>
                   ))}
                 </MapContainer>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-2xl font-semibold text-[#0E2040]">Company Feedback</h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Feedback submitted by collection companies (demo data, local storage for now).
+              </p>
+              <div className="mt-4 space-y-3">
+                {feedbackList.length === 0 ? (
+                  <div className="rounded-lg border p-4 text-sm text-slate-600">No feedback submitted yet.</div>
+                ) : (
+                  feedbackList.map((entry) => (
+                    <div key={entry.id} className="rounded-lg border p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="font-semibold text-[#0E2040]">{entry.companyName}</p>
+                        <p className="text-xs text-slate-500">{new Date(entry.createdAt).toLocaleString()}</p>
+                      </div>
+                      <p className="mt-1 text-sm text-slate-700"><span className="font-medium">{entry.category}</span> - {entry.rating}/5</p>
+                      <p className="mt-1 text-sm text-slate-600">{entry.comment}</p>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
