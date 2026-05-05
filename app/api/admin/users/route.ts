@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { ADMIN_EMAIL, APP_ROLES } from "@/lib/auth/constants";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 const allowedUserRoles = [APP_ROLES.COMPANY, APP_ROLES.HOUSEHOLD] as const;
 type AllowedUserRole = (typeof allowedUserRoles)[number];
@@ -37,6 +37,7 @@ const getRequester = async (request: NextRequest) => {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
     const requester = await getRequester(request);
     if (requester.error) {
       return NextResponse.json({ message: requester.error }, { status: requester.status });
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
     const requester = await getRequester(request);
     if (requester.error) {
       return NextResponse.json({ message: requester.error }, { status: requester.status });

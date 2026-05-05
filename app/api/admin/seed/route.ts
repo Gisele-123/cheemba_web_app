@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_EMAIL, ADMIN_PASSWORD, APP_ROLES } from "@/lib/auth/constants";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
     const body = await request.json();
     const email = String(body.email || "").trim().toLowerCase();
     const password = String(body.password || "").trim();
