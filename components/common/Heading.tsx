@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,9 +27,11 @@ import { FaShop } from 'react-icons/fa6';
 import { IoHomeSharp, IoStatsChart } from 'react-icons/io5';
 import { RiDeleteBinFill } from 'react-icons/ri';
 import Image from 'next/image';
+import { supabase } from '@/lib/supabase/client';
 
-const Heading = () => {
+const Heading = ({ isAdmin }: { isAdmin: boolean }) => {
   const [isSheetOpen, setSheetOpen] = useState(false);
+  const router = useRouter();
   const pathname = usePathname();
 
   const getActiveClass = (path: string) =>
@@ -101,6 +103,18 @@ const Heading = () => {
               <FaShop className="h-4 w-4" />
               Market
             </Link>
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-3 ${getActiveClass(
+                  '/admin'
+                )}`}
+                onClick={handleLinkClick}
+              >
+                <FaUserLarge className="h-4 w-4" />
+                Admin Portal
+              </Link>
+            )}
           </nav>
           <div className="mt-auto">
             <nav className="grid gap-3 items-start text-base px-2 font-medium lg:px-4 text-white">
@@ -159,6 +173,15 @@ const Heading = () => {
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Link href={'/settings'}>Settings</Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={async () => {
+              await supabase.auth.signOut();
+              router.replace('/login');
+            }}
+          >
+            Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

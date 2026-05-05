@@ -18,8 +18,8 @@ import img2 from '@/public/assets/img2.jpg';
 import img3 from '@/public/assets/img4.jpg';
 import Image from 'next/image';
 import { RadialChart } from '@/components/charts/RadialChart';
+import { supabase } from '@/lib/supabase/client';
 // import Link from 'next/link';
-import axios from 'axios';
 
 
 
@@ -82,29 +82,10 @@ const Profile = () => {
         setLoading(true); // Set loading to true
   
         try {
-          const response = await axios.post(
-            'http://localhost:5000/logout',
-            {},
-            { withCredentials: true }
-          );
-  
-          if (response.data.message === 'Logged out successfully') {
-            Swal.fire('Logged out', 'You have been logged out.', 'success');
-            router.push('/login');
-          } else {
-            Swal.fire('Error', 'There was an issue logging you out.', 'error');
-          }
-        } catch (error:any) {
-          console.error('Error during logout:', error);
-          if (error.response) {
-            console.error('Response data:', error.response.data);
-            console.error('Response status:', error.response.status);
-            console.error('Response headers:', error.response.headers);
-          } else if (error.request) {
-            console.error('No response received:', error.request);
-          } else {
-            console.error('Error setting up request:', error.message);
-          }
+          await supabase.auth.signOut();
+          Swal.fire('Logged out', 'You have been logged out.', 'success');
+          router.push('/login');
+        } catch {
           Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
         } finally {
           setLoading(false); // Reset loading state

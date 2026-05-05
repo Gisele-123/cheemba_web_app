@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cheemba Web App (Supabase Demo)
 
-## Getting Started
+This demo uses **Supabase Auth** (sign-in only), role-based access, an admin portal, Kigali waste bin monitoring, and a traffic-aware shortest path map.
 
-First, run the development server:
+## 1) Supabase setup
+
+1. Create a Supabase project at [supabase.com](https://supabase.com).
+2. In **Authentication > Providers > Email**, keep Email enabled.
+3. In **Authentication > Email templates / settings**, disable mandatory email confirmations for this demo (or use admin-created users with confirmed email).
+4. Copy your project values from **Project Settings > API**:
+   - Project URL
+   - `anon` key
+   - `service_role` key
+5. Create a local env file:
+   - Copy `.env.example` to `.env.local`
+   - Fill in those three values.
+
+## 2) Install and run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 3) Admin login credentials (seeded in app)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Email: `admin@cheemba.rw`
+- Password: `07983846666`
 
-## Learn More
+On first admin login attempt, the app auto-seeds this admin account (for demo speed).
 
-To learn more about Next.js, take a look at the following resources:
+## 4) What is live now
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Public app flow is **sign-in only**.
+- Admin can create:
+  - Waste collection company users
+  - Individual household users
+- Admin has a dedicated portal with analytics cards.
+- Bins page shows multiple Kigali bins and fill levels.
+- Bin detail page shows a shortest-route map that avoids marked traffic jam segments.
+- Dashboard messaging indicates the platform is live while still developing more modules.

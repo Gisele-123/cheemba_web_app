@@ -9,7 +9,7 @@ import { RiDeleteBinFill } from 'react-icons/ri';
 import { FaShop } from 'react-icons/fa6';
 import { FaUserLarge } from 'react-icons/fa6';
 
-const Sidebar = () => {
+const Sidebar = ({ isAdmin }: { isAdmin: boolean }) => {
   const pathname = usePathname();
 
   const getActiveClass = (path: string) =>
@@ -63,6 +63,17 @@ const Sidebar = () => {
               <FaShop className="h-4 w-4" />
               Market
             </Link>
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={`flex items-center gap-3 rounded-[8px] px-3 py-[15px] ${getActiveClass(
+                  '/admin'
+                )}`}
+              >
+                <FaUserLarge className="h-4 w-4" />
+                Admin Portal
+              </Link>
+            )}
           </nav>
         </div>
         <div className="mt-auto">

@@ -1,55 +1,77 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 'use client';
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 import Swal from 'sweetalert2';
+import { supabase } from "@/lib/supabase/client";
+import { ADMIN_EMAIL, ADMIN_PASSWORD, APP_ROLES } from "@/lib/auth/constants";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
-    setLoading(true)
     e.preventDefault();
+    setLoading(true);
+    const normalizedEmail = email.trim().toLowerCase();
 
-    const response = await fetch('http://localhost:5000/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        company_email: email,
-        password: password,
-      }),
-    });
+    try {
+      if (normalizedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        const seedResponse = await fetch("/api/admin/seed", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: ADMIN_EMAIL,
+            password: ADMIN_PASSWORD,
+          }),
+        });
 
-    const data = await response.json();
+        if (!seedResponse.ok) {
+          const seedData = await seedResponse.json();
+          throw new Error(seedData.message || "Failed to prepare admin account.");
+        }
+      }
 
-    if (response.status === 200) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
+
+      if (error || !data.user) {
+        throw new Error(error?.message || "Invalid credentials.");
+      }
+
+      const role = String(data.user.user_metadata?.role || "");
+      if (normalizedEmail === ADMIN_EMAIL && role !== APP_ROLES.ADMIN) {
+        throw new Error("Admin role is missing on this account.");
+      }
+
       Swal.fire({
         icon: 'success',
-        title: data.message,
+        title: 'Login successful',
         showConfirmButton: true,
-        timer: 1000,
+        timer: 900,
       }).then(() => {
         router.push('/home');
+        router.refresh();
       });
-    } else {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to sign in.";
       Swal.fire({
         icon: 'error',
-        title: 'Oops...',
-        text: data.message,
+        title: 'Sign in failed',
+        text: message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,25 +158,15 @@ export default function LoginPage() {
                       Terms & Conditions
                     </label>
                   </div>
-                  <Link href="/forgot-password" className="underline text-sm font-spaceGrotesk">
-                    Forgot Password
-                  </Link>
+                  <span className="text-xs text-slate-600">Sign-in only demo access</span>
                 </div>
 
-                <Button
-                  className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk"
-                  type="submit"
-                  onClick={handleLogin}
-                  disabled={loading}
-                >
+                <Button className="h-11 w-full bg-black text-white hover:bg-black/90 font-spaceGrotesk" type="submit" disabled={loading}>
                   {loading ? 'Signing In...' : 'Log In'}
                 </Button>
 
                 <p className="text-center text-sm font-spaceGrotesk">
-                  Don&apos;t have an account?{" "}
-                  <Link href="/signup" className="underline font-bold font-spaceGrotesk">
-                    Sign up for free
-                  </Link>
+                  Accounts are created by an admin only.
                 </p>
               </form>
             </div>
