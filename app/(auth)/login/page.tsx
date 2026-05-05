@@ -115,7 +115,7 @@ export default function LoginPage() {
                     id="email"
                     type="email"
                     placeholder="Email"
-                    className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100"
+                    className="font-spaceGrotesk border-b border-gray-300 w-full px-3 py-3 bg-gray-100 rounded-t-md"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -127,7 +127,7 @@ export default function LoginPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
-                      className="font-spaceGrotesk border-b border-gray-300 w-full py-2 bg-gray-100"
+                      className="font-spaceGrotesk border-b border-gray-300 w-full px-3 py-3 bg-gray-100 rounded-t-md"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
