@@ -75,8 +75,9 @@ export default function AdminPortalPage() {
   const mapIcon = (critical: boolean) =>
     L.divIcon({
       className: '',
-      html: `<span style="display:block;width:16px;height:16px;border-radius:9999px;background:${critical ? '#ef4444' : '#22c55e'};border:2px solid white;box-shadow:0 0 0 1px rgba(0,0,0,0.2);"></span>`,
-      iconSize: [16, 16],
+      html: `<span class="wastebin-map-icon" style="background:${critical ? '#ef4444' : '#22c55e'};">🗑️</span>`,
+      iconSize: [34, 34],
+      iconAnchor: [17, 30],
     });
 
   const roleLabel = useMemo(
@@ -318,7 +319,7 @@ export default function AdminPortalPage() {
             <div>
               <h2 className="text-2xl font-semibold text-[#0E2040]">Users List</h2>
               <p className="mt-1 text-sm text-slate-600">All collection companies and households created by admin.</p>
-              <div className="mt-4 overflow-hidden rounded-xl border">
+              <div className="mt-4 overflow-x-auto rounded-xl border">
                 <table className="w-full text-sm">
                   <thead className="bg-slate-100 text-left">
                     <tr>
@@ -398,7 +399,7 @@ export default function AdminPortalPage() {
                 </button>
               </form>
               {stockMessage && <p className="mt-3 text-sm text-slate-700">{stockMessage}</p>}
-              <div className="mt-6 overflow-hidden rounded-xl border">
+              <div className="mt-6 overflow-x-auto rounded-xl border">
                 <table className="w-full text-sm">
                   <thead className="bg-slate-100 text-left">
                     <tr>
@@ -432,7 +433,7 @@ export default function AdminPortalPage() {
                 Hover over a bin to view level, status, location and assigned company.
               </p>
               <div className="mt-4 rounded-2xl border p-3">
-                <MapContainer center={adminMapCenter} zoom={12} scrollWheelZoom className="h-[560px] w-full rounded-xl">
+                <MapContainer center={adminMapCenter} zoom={12} scrollWheelZoom className="h-[70vh] min-h-[360px] w-full rounded-xl">
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   {bins.map((bin) => (
                     <Marker key={bin.id} position={[bin.lat, bin.lng]} icon={mapIcon(bin.fillPercent >= 90)}>

@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
+import L from 'leaflet';
 
 const distance = (a: [number, number], b: [number, number]) => {
   const dx = a[0] - b[0];
@@ -84,6 +85,16 @@ export default function BinDetailsPage() {
     () => findShortestRoute([controlRoomLocation.lat, controlRoomLocation.lng], [bin.lat, bin.lng]),
     [bin.lat, bin.lng]
   );
+  const binIcon = useMemo(
+    () =>
+      L.divIcon({
+        className: '',
+        html: `<span class="wastebin-map-icon" style="background:${bin.fillPercent >= 90 ? '#ef4444' : '#22c55e'};">🗑️</span>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 30],
+      }),
+    [bin.fillPercent]
+  );
 
   return (
     <div className="space-y-6">
@@ -97,12 +108,12 @@ export default function BinDetailsPage() {
 
       <div className="rounded-2xl bg-white p-4 shadow-sm">
         <h3 className="mb-3 text-lg font-semibold">Real-time shortest path (traffic-aware demo)</h3>
-        <MapContainer center={[bin.lat, bin.lng]} zoom={13} scrollWheelZoom className="h-[520px] w-full rounded-xl">
+        <MapContainer center={[bin.lat, bin.lng]} zoom={13} scrollWheelZoom className="h-[70vh] min-h-[360px] w-full rounded-xl">
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <Marker position={[controlRoomLocation.lat, controlRoomLocation.lng]}>
             <Popup>{controlRoomLocation.name}</Popup>
           </Marker>
-          <Marker position={[bin.lat, bin.lng]}>
+          <Marker position={[bin.lat, bin.lng]} icon={binIcon}>
             <Popup>{bin.locationName}</Popup>
           </Marker>
           <Polyline positions={routePath} pathOptions={{ color: '#0D99FF', weight: 6 }} />

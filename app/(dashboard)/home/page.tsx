@@ -13,8 +13,9 @@ import type { BinSaleRecord } from '@/lib/demo/inventory';
 const binIcon = (isCritical: boolean) =>
   L.divIcon({
     className: '',
-    html: `<span style="display:block;width:16px;height:16px;border-radius:9999px;background:${isCritical ? '#ef4444' : '#22c55e'};border:2px solid white;box-shadow:0 0 0 1px rgba(0,0,0,0.2);"></span>`,
-    iconSize: [16, 16],
+    html: `<span class="wastebin-map-icon" style="background:${isCritical ? '#ef4444' : '#22c55e'};">🗑️</span>`,
+    iconSize: [34, 34],
+    iconAnchor: [17, 30],
   });
 
 const HomeDashboard = () => {
@@ -79,7 +80,7 @@ const HomeDashboard = () => {
           </div>
         </div>
         <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <MapContainer center={userLocation} zoom={12} scrollWheelZoom className="h-[560px] w-full rounded-xl">
+          <MapContainer center={userLocation} zoom={12} scrollWheelZoom className="h-[70vh] min-h-[360px] w-full rounded-xl">
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {bins.map((bin) => (
               <Marker key={bin.id} position={[bin.lat, bin.lng]} icon={binIcon(bin.fillPercent >= 90)}>
@@ -131,7 +132,7 @@ const HomeDashboard = () => {
         </div>
       </div>
       <div className="rounded-2xl bg-white p-4 shadow-sm">
-        <MapContainer center={userLocation} zoom={13} scrollWheelZoom className="h-[560px] w-full rounded-xl">
+        <MapContainer center={userLocation} zoom={13} scrollWheelZoom className="h-[70vh] min-h-[360px] w-full rounded-xl">
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           {bins.map((bin) => (
             <Marker key={bin.id} position={[bin.lat, bin.lng]} icon={binIcon(bin.fillPercent >= 90)}>
