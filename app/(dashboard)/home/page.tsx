@@ -9,6 +9,35 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
 import type { BinSaleRecord } from '@/lib/demo/inventory';
+import { MessageSquareText } from 'lucide-react';
+
+type CompanyFeedback = {
+  id: string;
+  companyName: string;
+  category: 'Performance' | 'UI/UX' | 'Routing' | 'Support';
+  rating: number;
+  comment: string;
+  createdAt: string;
+};
+
+const demoFeedback: CompanyFeedback[] = [
+  {
+    id: 'fb-1',
+    companyName: 'EnviroServe',
+    category: 'Routing',
+    rating: 5,
+    comment: 'The live map and overflow alerts helped our dispatch team reduce response time.',
+    createdAt: '2026-05-03T10:12:00.000Z',
+  },
+  {
+    id: 'fb-2',
+    companyName: 'Kigali Clean Co',
+    category: 'UI/UX',
+    rating: 4,
+    comment: 'Dashboard is clear and professional. We would love batch assignment next.',
+    createdAt: '2026-05-04T08:33:00.000Z',
+  },
+];
 
 const binIcon = (isCritical: boolean) =>
   L.divIcon({
@@ -23,6 +52,11 @@ const HomeDashboard = () => {
   const [companyName, setCompanyName] = useState('Cheemba');
   const [soldBins, setSoldBins] = useState<BinSaleRecord[]>([]);
   const [userLocation, setUserLocation] = useState<[number, number]>([-1.9441, 30.0619]);
+  const [feedbackList, setFeedbackList] = useState<CompanyFeedback[]>(demoFeedback);
+  const [feedbackCategory, setFeedbackCategory] = useState<CompanyFeedback['category']>('Performance');
+  const [feedbackRating, setFeedbackRating] = useState(5);
+  const [feedbackComment, setFeedbackComment] = useState('');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -40,6 +74,10 @@ const HomeDashboard = () => {
     if (savedSales) {
       setSoldBins(JSON.parse(savedSales));
     }
+    const savedFeedback = window.localStorage.getItem('cheemba-company-feedback');
+    if (savedFeedback) {
+      setFeedbackList(JSON.parse(savedFeedback));
+    }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -48,6 +86,10 @@ const HomeDashboard = () => {
       () => undefined
     );
   }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('cheemba-company-feedback', JSON.stringify(feedbackList));
+  }, [feedbackList]);
 
   const criticalBins = bins.filter((bin) => bin.fillPercent >= 90).length;
   const activeAlerts = bins.filter((bin) => bin.fillPercent >= 80).length;
@@ -105,6 +147,27 @@ const HomeDashboard = () => {
   const companyStockUnits = soldBins
     .filter((record) => record.companyName === companyName)
     .reduce((acc, record) => acc + record.quantity, 0);
+
+  const onSubmitFeedback = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!feedbackComment.trim()) {
+      setFeedbackMessage('Please write your feedback before submitting.');
+      return;
+    }
+    const newFeedback: CompanyFeedback = {
+      id: `${Date.now()}`,
+      companyName,
+      category: feedbackCategory,
+      rating: feedbackRating,
+      comment: feedbackComment.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    setFeedbackList((prev) => [newFeedback, ...prev]);
+    setFeedbackComment('');
+    setFeedbackCategory('Performance');
+    setFeedbackRating(5);
+    setFeedbackMessage('Feedback submitted. Thank you for improving Cheemba.');
+  };
 
   return (
     <div className="flex flex-col gap-5 p-6 max-md:p-3">
@@ -164,6 +227,59 @@ const HomeDashboard = () => {
               </div>
             ))
           )}
+        </div>
+      </div>
+      <div className="rounded-xl bg-white p-5 shadow-sm">
+        <div className="mb-4 flex items-center gap-2">
+          <MessageSquareText className="h-5 w-5 text-[#0A3B83]" />
+          <h4 className="text-lg font-semibold text-[#0E2040]">Company Feedback</h4>
+        </div>
+        <form className="grid gap-3 md:grid-cols-3" onSubmit={onSubmitFeedback}>
+          <select
+            value={feedbackCategory}
+            onChange={(event) => setFeedbackCategory(event.target.value as CompanyFeedback['category'])}
+            className="rounded-lg border p-3"
+          >
+            <option value="Performance">Performance</option>
+            <option value="UI/UX">UI/UX</option>
+            <option value="Routing">Routing</option>
+            <option value="Support">Support</option>
+          </select>
+          <select
+            value={feedbackRating}
+            onChange={(event) => setFeedbackRating(Number(event.target.value))}
+            className="rounded-lg border p-3"
+          >
+            <option value={5}>5 - Excellent</option>
+            <option value={4}>4 - Good</option>
+            <option value={3}>3 - Fair</option>
+            <option value={2}>2 - Needs Improvement</option>
+            <option value={1}>1 - Poor</option>
+          </select>
+          <button type="submit" className="rounded-lg bg-[#0A3B83] px-4 py-3 text-white hover:bg-[#082f69]">
+            Submit Feedback
+          </button>
+          <textarea
+            value={feedbackComment}
+            onChange={(event) => setFeedbackComment(event.target.value)}
+            placeholder="Share your operational feedback about the system..."
+            className="min-h-28 rounded-lg border p-3 md:col-span-3"
+          />
+        </form>
+        {feedbackMessage && <p className="mt-2 text-sm text-slate-600">{feedbackMessage}</p>}
+        <div className="mt-4 space-y-3">
+          {feedbackList.map((entry) => (
+            <div key={entry.id} className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="font-semibold text-[#0E2040]">{entry.companyName}</p>
+                <p className="text-xs text-slate-500">{new Date(entry.createdAt).toLocaleString()}</p>
+              </div>
+              <p className="mt-1 text-sm text-slate-700">
+                <span className="font-medium">{entry.category}</span> - {entry.rating}/5
+              </p>
+              <p className="mt-1 text-sm text-slate-600">{entry.comment}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
