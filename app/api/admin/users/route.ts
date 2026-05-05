@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { ADMIN_EMAIL, APP_ROLES, type AppRole } from "@/lib/auth/constants";
+import { ADMIN_EMAIL, APP_ROLES } from "@/lib/auth/constants";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+
+const allowedUserRoles = [APP_ROLES.COMPANY, APP_ROLES.HOUSEHOLD] as const;
+type AllowedUserRole = (typeof allowedUserRoles)[number];
+
+const isAllowedUserRole = (value: string): value is AllowedUserRole =>
+  allowedUserRoles.includes(value as AllowedUserRole);
 
 const getRequester = async (request: NextRequest) => {
   const authHeader = request.headers.get("authorization");
@@ -39,7 +45,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const email = String(body.email || "").trim().toLowerCase();
     const password = String(body.password || "").trim();
-    const role = String(body.role || "") as AppRole;
+    const role = String(body.role || "");
     const displayName = String(body.displayName || "").trim();
     const companyName = String(body.companyName || "").trim();
 
@@ -47,7 +53,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "All fields are required." }, { status: 400 });
     }
 
-    if (![APP_ROLES.COMPANY, APP_ROLES.HOUSEHOLD].includes(role)) {
+    if (!isAllowedUserRole(role)) {
       return NextResponse.json({ message: "Invalid role selected." }, { status: 400 });
     }
 
@@ -85,7 +91,7 @@ export async function GET(request: NextRequest) {
 
     const usersResponse = await supabaseAdmin.auth.admin.listUsers();
     const users = usersResponse.data.users
-      .filter((user) => [APP_ROLES.COMPANY, APP_ROLES.HOUSEHOLD].includes(user.user_metadata?.role as AppRole))
+      .filter((user) => isAllowedUserRole(String(user.user_metadata?.role || "")))
       .map((user) => ({
         id: user.id,
         email: user.email,
